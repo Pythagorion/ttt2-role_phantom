@@ -179,12 +179,24 @@ if SERVER then
         -- cache Killing CVar here because it's used locally here
         local cv_phant_kill_policing_after_search = GetConVar("ttt_phantom_kill_policing_after_search"):GetBool()
         local cv_phant_rev_after_search_body_found = GetConVar("ttt_phantom_revive_after_found"):GetBool()
+        local cv_phant_rev_more_than_once_body_found = GetConVar("ttt_phantom_resurrection_everytime"):GetBool()
+        local cv_phant_kill_everytime_body_found = GetConVar("ttt_phantom_kill_everytime"):GetBool()
 
         if cv_phant_kill_policing_after_search and ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() == ROLE_PHANTOM then
             ply:Kill()
 
             if cv_phant_rev_after_search_body_found and not deadply.phant_data.revd_once then
                 deadply:Revive(0.1,_,_,false,1)
+            end
+
+            -- if phantom shall be revived only once, we must set the 'only-once'-flag
+            if not cv_phant_rev_more_than_once_body_found then
+                deadply.phant_data.revd_once = true
+            end
+
+            -- if phantom shall kill only once, we must set the 'only-once'-flag
+            if not cv_phant_kill_everytime_body_found then
+                deadply.phant_data.killed_once = true
             end
         end
     end)
