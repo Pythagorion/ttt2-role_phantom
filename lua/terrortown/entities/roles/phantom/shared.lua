@@ -181,7 +181,6 @@ if SERVER then
         local cv_phant_rev_after_search_body_found = GetConVar("ttt_phantom_revive_after_found"):GetBool()
 
         if cv_phant_kill_policing_after_search and ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() == ROLE_PHANTOM then
-            print("HOOKTEST")
             ply:Kill()
 
             if cv_phant_rev_after_search_body_found and not deadply.phant_data.revd_once then
@@ -318,3 +317,4 @@ if CLIENT then
 		})
     end
 end
+
