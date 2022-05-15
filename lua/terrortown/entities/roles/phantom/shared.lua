@@ -183,7 +183,9 @@ if SERVER then
         local cv_phant_kill_everytime_body_found = GetConVar("ttt_phantom_kill_everytime"):GetBool()
 
         if cv_phant_kill_policing_after_search and ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() == ROLE_PHANTOM then
-            ply:Kill()
+            if not deadply.phant_data.killed_once then
+                ply:Kill()
+            end
 
             if cv_phant_rev_after_search_body_found and not deadply.phant_data.revd_once then
                 deadply:Revive(0.1,_,_,false,1)
@@ -329,4 +331,3 @@ if CLIENT then
 		})
     end
 end
-
