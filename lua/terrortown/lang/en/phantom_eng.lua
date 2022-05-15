@@ -33,12 +33,12 @@ L["label_phantom_traitor_cannot_search_all"] = "Traitors cannot search all corps
 L["label_phantom_begin_popup_intel"] = "If it's set to true, a pop-up will announce at the beginning of the round that there is a phantom among the players."
 L["label_phantom_send_epop_at_beginning"] = "Display a pop-up that will warn players about the Phantom"
 
-L["label_phantom_prevent_policing_searches_intel"] = "These cvars control which corpses can be confirmed by policing roles, such as detectives. Notice: If you prevent that policing roles can search Phantom corpses, the policing player will die by trying to search the Phantom's corpse."
-L["label_phantom_prevent_policing_search_phantom"] = "Prevent the Phantom's corpse from being confirmed by policing roles"
-L["label_phantom_prevent_policing_search_all"] = "Prevent all corpses - except the Phantom's one - from being confirmed by policing roles"
+L["label_phantom_prevent_policing_searches_intel"] = "These cvars control which corpses can be confirmed by public-policing roles, such as detectives. Notice: If you prevent that policing roles can search Phantom corpses, the public-policing player will die by trying to search the Phantom's corpse."
+L["label_phantom_prevent_policing_search_phantom"] = "Prevent the Phantom's corpse from being confirmed by public-policing roles"
+L["label_phantom_prevent_policing_search_all"] = "Prevent all corpses - except the Phantom's one - from being confirmed by public-policing roles"
 
-L["label_phantom_kill_policing_nonetheless_intel"] = "Since policing roles can theoretically confirm Phantoms without being killed, this CVar can be used to control that a policing role still dies as soon as they confirm the Phantom. Whether the Phantom is then revived is controlled by the corresponding CVar above."
-L["label_phantom_kill_policing_after_search"] = "Kill policing roles, when they confirm the Phantom"
+L["label_phantom_kill_policing_nonetheless_intel"] = "Since public-policing roles can theoretically confirm Phantoms without being killed, this CVar can be used to control that a policing role still dies as soon as they confirm the Phantom. Whether the Phantom is then revived is controlled by the corresponding CVar above."
+L["label_phantom_kill_policing_after_search"] = "Kill public-policing roles, when they confirm the Phantom"
 
 L["label_phantom_in_round_hint_intel"] = "If it's set to true, the player who tries to search a corpse but cannot, receives a warning that they cannot search that corpse because a phantom is on the move."
 L["label_phantom_in_round_hint"] = "Display a warn message that corpses can't be searched while a Phantom is active"

@@ -64,7 +64,7 @@ if SERVER then
         local cv_phant_in_round_hint = GetConVar("ttt_phantom_in_round_hint"):GetBool()
 
         -- Kill the searching player if the dead is phantom and no policing role (handled extra) nor a traitor
-        if deadply:GetSubRole() == ROLE_PHANTOM and ply:GetTeam() ~= TEAM_TRAITOR and not ply:GetSubRoleData().isPolicingRole then
+        if deadply:GetSubRole() == ROLE_PHANTOM and ply:GetTeam() ~= TEAM_TRAITOR and ( not ply:GetSubRoleData().isPolicingRole and not ply:GetSubRoleData().isPublicRole) then
             if not deadply.phant_data.killed_once then
                 ply:Kill()
             end
@@ -86,7 +86,7 @@ if SERVER then
         end
 
         -- Kill policing roles nonetheless when they cannot search the Phantom's corpse
-        if deadply:GetSubRole() == ROLE_PHANTOM and ply:GetSubRoleData().isPolicingRole and cv_phant_prevent_policing_search_phantom then
+        if deadply:GetSubRole() == ROLE_PHANTOM and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and cv_phant_prevent_policing_search_phantom then
             if not deadply.phant_data.killed_once then
                 ply:Kill()
             end
@@ -108,7 +108,7 @@ if SERVER then
         end
 
         -- prevent confirmation if cvar is configured as such and the dead is a phantom. Traitors and policing roles will be handled further down below.
-        if cv_phant_prevent_confirmation and deadply:GetSubRole() == ROLE_PHANTOM and not ply:GetSubRoleData().isPolicingRole and ply:GetTeam() ~= TEAM_TRAITOR then
+        if cv_phant_prevent_confirmation and deadply:GetSubRole() == ROLE_PHANTOM and ( not ply:GetSubRoleData().isPolicingRole and not ply:GetSubRoleData().isPublicRole) and ply:GetTeam() ~= TEAM_TRAITOR then
 
             -- Send out pop-in hint message if wanted and players arent able to search bodies
             if cv_phant_in_round_hint then
@@ -119,7 +119,7 @@ if SERVER then
         end
 
         -- prevent that any body can be searched. Once again traitors and policing roles will be handled below.
-        if cv_phant_prevent_searching_of_all and deadply:GetSubRole() ~= ROLE_PHANTOM and not ply:GetSubRoleData().isPolicingRole and ply:GetTeam() ~= TEAM_TRAITOR then
+        if cv_phant_prevent_searching_of_all and deadply:GetSubRole() ~= ROLE_PHANTOM and ( not ply:GetSubRoleData().isPolicingRole and not ply:GetSubRoleData().isPublicRole) and ply:GetTeam() ~= TEAM_TRAITOR then
 
             -- Send out pop-in hint message if wanted and players arent able to search bodies
             if cv_phant_in_round_hint then
@@ -130,7 +130,7 @@ if SERVER then
         end
 
         -- Don't let Traitors search phantoms if wanted
-        if cv_phant_traitor_prevent_search_phant and ply:GetTeam() == TEAM_TRAITOR and not ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() == ROLE_PHANTOM then
+        if cv_phant_traitor_prevent_search_phant and ply:GetTeam() == TEAM_TRAITOR and ( not ply:GetSubRoleData().isPolicingRole and not ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
 
             -- Send out pop-in hint message if wanted and players arent able to search bodies
             if cv_phant_in_round_hint then
@@ -141,7 +141,7 @@ if SERVER then
         end
 
         -- Don't let Traitors search other bodies than phantoms if wanted
-        if cv_phant_traitor_prevent_search_all and ply:GetTeam() == TEAM_TRAITOR and not ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() ~= ROLE_PHANTOM then
+        if cv_phant_traitor_prevent_search_all and ply:GetTeam() == TEAM_TRAITOR and ( not ply:GetSubRoleData().isPolicingRole and not ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() ~= ROLE_PHANTOM then
 
             -- Send out pop-in hint message if wanted and players arent able to search bodies
             if cv_phant_in_round_hint then
@@ -152,7 +152,7 @@ if SERVER then
         end
 
         -- Don't let policing Roles search phantoms if wanted
-        if cv_phant_prevent_policing_search_phantom and ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() == ROLE_PHANTOM then
+        if cv_phant_prevent_policing_search_phantom and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
 
             -- Send out pop-in hint message if wanted and players arent able to search bodies
             if cv_phant_in_round_hint then
@@ -163,7 +163,7 @@ if SERVER then
         end
 
         -- Don't let policing Roles search other bodies than phantoms if wanted
-        if cv_phant_prevent_policing_search_all and ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() ~= ROLE_PHANTOM then
+        if cv_phant_prevent_policing_search_all and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() ~= ROLE_PHANTOM then
 
             -- Send out pop-in hint message if wanted and players arent able to search bodies
             if cv_phant_in_round_hint then
@@ -182,7 +182,7 @@ if SERVER then
         local cv_phant_rev_more_than_once_body_found = GetConVar("ttt_phantom_resurrection_everytime"):GetBool()
         local cv_phant_kill_everytime_body_found = GetConVar("ttt_phantom_kill_everytime"):GetBool()
 
-        if cv_phant_kill_policing_after_search and ply:GetSubRoleData().isPolicingRole and deadply:GetSubRole() == ROLE_PHANTOM then
+        if cv_phant_kill_policing_after_search and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
             if not deadply.phant_data.killed_once then
                 ply:Kill()
             end
