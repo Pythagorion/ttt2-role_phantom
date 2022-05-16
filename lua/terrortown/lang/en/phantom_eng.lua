@@ -37,7 +37,7 @@ L["label_phantom_prevent_policing_searches_intel"] = "These cvars control which 
 L["label_phantom_prevent_policing_search_phantom"] = "Prevent the Phantom's corpse from being confirmed by public-policing roles"
 L["label_phantom_prevent_policing_search_all"] = "Prevent all corpses - except the Phantom's one - from being confirmed by public-policing roles"
 
-L["label_phantom_kill_policing_nonetheless_intel"] = "Since public-policing roles can theoretically confirm Phantoms without being killed, this CVar can be used to control that a policing role still dies as soon as they confirm the Phantom. Whether the Phantom is then revived is controlled by the corresponding CVar above."
+L["label_phantom_kill_policing_nonetheless_intel"] = "Since public-policing roles can theoretically confirm Phantoms without being killed, this CVar can be used to control that a policing role still dies as soon as they confirm the Phantom. Whether the Phantom is then revived is controlled by the corresponding CVar above. Note that this only works if searching isn't prevented and it will work only once if the cvar 'kill everytime' isn't active"
 L["label_phantom_kill_policing_after_search"] = "Kill public-policing roles, when they confirm the Phantom"
 
 L["label_phantom_in_round_hint_intel"] = "If it's set to true, the player who tries to search a corpse but cannot, receives a warning that they cannot search that corpse because a phantom is on the move."

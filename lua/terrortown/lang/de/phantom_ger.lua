@@ -37,7 +37,7 @@ L["label_phantom_prevent_policing_searches_intel"] = "Diese Cvars steuern, welch
 L["label_phantom_prevent_policing_search_phantom"] = "Verhindere, dass die Leiche des Phantoms bestätigt wird"
 L["label_phantom_prevent_policing_search_all"] = "Verhindere, dass alle Leichen - außer die des Phantoms - bestätigt werden"
 
-L["label_phantom_kill_policing_nonetheless_intel"] = "Da etwa Detektive theoretisch Phantome bestätigen können, ohne getötet zu werden, kann dieser CVar verwendet werden, um zu steuern, dass etwa Detektive trotzdem sterben, sobald sie das Phantom bestätigen. Ob das Phantom dann wiederbelebt wird, wird durch den entsprechenden CVar oben gesteuert."
+L["label_phantom_kill_policing_nonetheless_intel"] = "Da etwa Detektive theoretisch Phantome bestätigen können, ohne getötet zu werden, kann dieser CVar verwendet werden, um zu steuern, dass etwa Detektive trotzdem sterben, sobald sie das Phantom bestätigen. Ob das Phantom dann wiederbelebt wird, wird durch den entsprechenden CVar oben gesteuert. Beachte, dass dies nur funktioniert, wenn die Suche nicht verhindert wird, und es funktioniert nur einmal, wenn die cvar 'kill everytime' nicht aktiv ist."
 L["label_phantom_kill_policing_after_search"] = "Töte Detektive o.Ä. Rollen, wenn sie das Phantom bestätigen."
 
 L["label_phantom_in_round_hint_intel"] = "Wenn diese Option auf true gesetzt ist, erhält der Spieler, der versucht, eine Leiche zu durchsuchen, dies aber nicht kann, eine Warnung, dass er diese Leiche nicht durchsuchen kann, weil ein Phantom unterwegs ist."
