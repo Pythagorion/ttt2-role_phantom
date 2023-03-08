@@ -63,114 +63,118 @@ if SERVER then
         local cv_phant_prevent_policing_search_all = GetConVar("ttt_phantom_prevent_policing_search_all"):GetBool()
         local cv_phant_in_round_hint = GetConVar("ttt_phantom_in_round_hint"):GetBool()
 
-        -- Kill the searching player if the dead is phantom and no policing role (handled extra) nor a traitor
-        if deadply:GetSubRole() == ROLE_PHANTOM and ply:GetTeam() ~= TEAM_TRAITOR and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) then
-            if not deadply.phant_data.killed_once then
-                ply:Kill()
+        -- Only execute code if there is a phantom-player
+        if GetGlobalBool("found_a_phantom", false) then
+
+            -- Kill the searching player if the dead is phantom and no policing role (handled extra) nor a traitor
+            if deadply:GetSubRole() == ROLE_PHANTOM and ply:GetTeam() ~= TEAM_TRAITOR and ply:Alive() and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) then
+                if not deadply.phant_data.killed_once then
+                    ply:Kill()
+                end
+
+                -- Revive phantom if wanted
+                if cv_phant_rev_after_search and not deadply.phant_data.revd_once then
+                    deadply:Revive(0.1,_,_,false,1)
+                end
+
+                -- if phantom shall be revived only once, we must set the 'only-once'-flag
+                if not cv_phant_rev_more_than_once then
+                    deadply.phant_data.revd_once = true
+                end
+
+                -- if phantom shall kill only once, we must set the 'only-once'-flag
+                if not cv_phant_kill_everytime then
+                    deadply.phant_data.killed_once = true
+                end
             end
 
-            -- Revive phantom if wanted
-            if cv_phant_rev_after_search and not deadply.phant_data.revd_once then
-                deadply:Revive(0.1,_,_,false,1)
+            -- Kill policing roles nonetheless when they cannot search the Phantom's corpse
+            if deadply:GetSubRole() == ROLE_PHANTOM and ply:Alive() and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and cv_phant_prevent_policing_search_phantom then
+                if not deadply.phant_data.killed_once then
+                    ply:Kill()
+                end
+
+                -- Revive phantom if wanted
+                if cv_phant_rev_after_search and not deadply.phant_data.revd_once then
+                    deadply:Revive(0.1,_,_,false,1)
+                end
+
+                -- if phantom shall be revived only once, we must set the 'only-once'-flag
+                if not cv_phant_rev_more_than_once then
+                    deadply.phant_data.revd_once = true
+                end
+
+                -- if phantom shall kill only once, we must set the 'only-once'-flag
+                if not cv_phant_kill_everytime then
+                    deadply.phant_data.killed_once = true
+                end
             end
 
-            -- if phantom shall be revived only once, we must set the 'only-once'-flag
-            if not cv_phant_rev_more_than_once then
-                deadply.phant_data.revd_once = true
-            end
+            -- prevent confirmation if cvar is configured as such and the dead is a phantom. Traitors and policing roles will be handled further down below.
+            if cv_phant_prevent_confirmation and deadply:GetSubRole() == ROLE_PHANTOM and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and ply:GetTeam() ~= TEAM_TRAITOR then
 
-            -- if phantom shall kill only once, we must set the 'only-once'-flag
-            if not cv_phant_kill_everytime then
-                deadply.phant_data.killed_once = true
-            end
-        end
-
-        -- Kill policing roles nonetheless when they cannot search the Phantom's corpse
-        if deadply:GetSubRole() == ROLE_PHANTOM and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and cv_phant_prevent_policing_search_phantom then
-            if not deadply.phant_data.killed_once then
-                ply:Kill()
-            end
-
-            -- Revive phantom if wanted
-            if cv_phant_rev_after_search and not deadply.phant_data.revd_once then
-                deadply:Revive(0.1,_,_,false,1)
-            end
-
-            -- if phantom shall be revived only once, we must set the 'only-once'-flag
-            if not cv_phant_rev_more_than_once then
-                deadply.phant_data.revd_once = true
-            end
-
-            -- if phantom shall kill only once, we must set the 'only-once'-flag
-            if not cv_phant_kill_everytime then
-                deadply.phant_data.killed_once = true
-            end
-        end
-
-        -- prevent confirmation if cvar is configured as such and the dead is a phantom. Traitors and policing roles will be handled further down below.
-        if cv_phant_prevent_confirmation and deadply:GetSubRole() == ROLE_PHANTOM and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and ply:GetTeam() ~= TEAM_TRAITOR then
-
-            -- Send out pop-in hint message if wanted and players arent able to search bodies
-            if cv_phant_in_round_hint then
-               LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
-            end
-
-            return false
-        end
-
-        -- prevent that any body can be searched. Once again traitors and policing roles will be handled below.
-        if cv_phant_prevent_searching_of_all and deadply:GetSubRole() ~= ROLE_PHANTOM and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and ply:GetTeam() ~= TEAM_TRAITOR then
-
-            -- Send out pop-in hint message if wanted and players arent able to search bodies
-            if cv_phant_in_round_hint then
+                -- Send out pop-in hint message if wanted and players arent able to search bodies
+                if cv_phant_in_round_hint then
                 LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                end
+
+                return false
             end
 
-            return false
-        end
+            -- prevent that any body can be searched. Once again traitors and policing roles will be handled below.
+            if cv_phant_prevent_searching_of_all and deadply:GetSubRole() ~= ROLE_PHANTOM and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and ply:GetTeam() ~= TEAM_TRAITOR then
 
-        -- Don't let Traitors search phantoms if wanted
-        if cv_phant_traitor_prevent_search_phant and ply:GetTeam() == TEAM_TRAITOR and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
+                -- Send out pop-in hint message if wanted and players arent able to search bodies
+                if cv_phant_in_round_hint then
+                    LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                end
 
-            -- Send out pop-in hint message if wanted and players arent able to search bodies
-            if cv_phant_in_round_hint then
-                LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                return false
             end
 
-            return false
-        end
+            -- Don't let Traitors search phantoms if wanted
+            if cv_phant_traitor_prevent_search_phant and ply:GetTeam() == TEAM_TRAITOR and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
 
-        -- Don't let Traitors search other bodies than phantoms if wanted
-        if cv_phant_traitor_prevent_search_all and ply:GetTeam() == TEAM_TRAITOR and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() ~= ROLE_PHANTOM then
+                -- Send out pop-in hint message if wanted and players arent able to search bodies
+                if cv_phant_in_round_hint then
+                    LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                end
 
-            -- Send out pop-in hint message if wanted and players arent able to search bodies
-            if cv_phant_in_round_hint then
-                LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                return false
             end
 
-            return false
-        end
+            -- Don't let Traitors search other bodies than phantoms if wanted
+            if cv_phant_traitor_prevent_search_all and ply:GetTeam() == TEAM_TRAITOR and not (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() ~= ROLE_PHANTOM then
 
-        -- Don't let policing Roles search phantoms if wanted
-        if cv_phant_prevent_policing_search_phantom and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
+                -- Send out pop-in hint message if wanted and players arent able to search bodies
+                if cv_phant_in_round_hint then
+                    LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                end
 
-            -- Send out pop-in hint message if wanted and players arent able to search bodies
-            if cv_phant_in_round_hint then
-                LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                return false
             end
 
-            return false
-        end
+            -- Don't let policing Roles search phantoms if wanted
+            if cv_phant_prevent_policing_search_phantom and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
 
-        -- Don't let policing Roles search other bodies than phantoms if wanted
-        if cv_phant_prevent_policing_search_all and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() ~= ROLE_PHANTOM then
+                -- Send out pop-in hint message if wanted and players arent able to search bodies
+                if cv_phant_in_round_hint then
+                    LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                end
 
-            -- Send out pop-in hint message if wanted and players arent able to search bodies
-            if cv_phant_in_round_hint then
-                LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                return false
             end
 
-            return false
+            -- Don't let policing Roles search other bodies than phantoms if wanted
+            if cv_phant_prevent_policing_search_all and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() ~= ROLE_PHANTOM then
+
+                -- Send out pop-in hint message if wanted and players arent able to search bodies
+                if cv_phant_in_round_hint then
+                    LANG.Msg(ply, "ttt2_cannot_search_corpse_" .. PHANTOM.name, nil, MSG_MSTACK_WARN)
+                end
+
+                return false
+            end
         end
     end)
 
@@ -182,35 +186,53 @@ if SERVER then
         local cv_phant_rev_more_than_once_body_found = GetConVar("ttt_phantom_resurrection_everytime"):GetBool()
         local cv_phant_kill_everytime_body_found = GetConVar("ttt_phantom_kill_everytime"):GetBool()
 
-        if cv_phant_kill_policing_after_search and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
-            if not deadply.phant_data.killed_once then
-                ply:Kill()
+        -- Only use cvars if there is a phantom active
+        if GetGlobalBool("found_a_phantom", false) then
+
+            if cv_phant_kill_policing_after_search and ply:Alive() and (ply:GetSubRoleData().isPolicingRole and ply:GetSubRoleData().isPublicRole) and deadply:GetSubRole() == ROLE_PHANTOM then
+                if not deadply.phant_data.killed_once then
+                    ply:Kill()
+                end
+
+                if cv_phant_rev_after_search_body_found and not deadply.phant_data.revd_once then
+                    deadply:Revive(0.1,_,_,false,1)
+                end
+
+                -- if phantom shall be revived only once, we must set the 'only-once'-flag
+                if not cv_phant_rev_more_than_once_body_found then
+                    deadply.phant_data.revd_once = true
+                end
+
+                -- if phantom shall kill only once, we must set the 'only-once'-flag
+                if not cv_phant_kill_everytime_body_found then
+                    deadply.phant_data.killed_once = true
+                end
             end
 
-            if cv_phant_rev_after_search_body_found and not deadply.phant_data.revd_once then
-                deadply:Revive(0.1,_,_,false,1)
-            end
-
-            -- if phantom shall be revived only once, we must set the 'only-once'-flag
-            if not cv_phant_rev_more_than_once_body_found then
-                deadply.phant_data.revd_once = true
-            end
-
-            -- if phantom shall kill only once, we must set the 'only-once'-flag
-            if not cv_phant_kill_everytime_body_found then
-                deadply.phant_data.killed_once = true
-            end
         end
     end)
 
     hook.Add("TTTBeginRound", "ttt2_role_phant_send_epop_to_begin_and_reset", function()
         local cv_phant_send_epop_at_beginning = GetConVar("ttt_phantom_send_epop_at_beginning"):GetBool()
+        SetGlobalBool("found_a_phantom", false)
+        local global_phantom_bool = GetGlobalBool("found_a_phantom", false)
 
         -- reset Phantom data
         ResetPhantom()
-        
-        -- send out an epop if cvar is configured as such
-        if cv_phant_send_epop_at_beginning then
+
+        local plys = player.GetAll()
+
+        for i = 1, #plys do
+            local ply = plys[i]
+
+            if ply:GetSubRole() == ROLE_PHANTOM then
+                SetGlobalBool("found_a_phantom", true)
+                break
+            end
+        end
+
+        -- send out an epop if cvar is configured as such and a phantom is active in this round
+        if cv_phant_send_epop_at_beginning and global_phantom_bool then
             net.Start("ttt2_phant_begin_epop")
             net.Broadcast()
         end
